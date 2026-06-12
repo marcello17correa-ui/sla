@@ -624,6 +624,53 @@ task.spawn(function()
 end)
 
 
+local ResizeHandle = Instance.new("Frame")
+ResizeHandle.Parent = Main
+ResizeHandle.Size = UDim2.new(0, 20, 0, 20)
+ResizeHandle.Position = UDim2.new(1, -20, 1, -20)
+ResizeHandle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+ResizeHandle.BackgroundTransparency = 0.3
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 4)
+UICorner.Parent = ResizeHandle
+local dragging = false
+local startInput
+local startSize
+
+ResizeHandle.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1
+	or input.UserInputType == Enum.UserInputType.Touch then
+
+		dragging = true
+		startInput = input.Position
+		startSize = Main.Size
+	end
+end)
+
+UIS.InputChanged:Connect(function(input)
+	if not dragging then return end
+
+	if input.UserInputType == Enum.UserInputType.MouseMovement
+	or input.UserInputType == Enum.UserInputType.Touch then
+
+		local delta = input.Position - startInput
+
+		local newX = math.max(250, startSize.X.Offset + delta.X)
+		local newY = math.max(300, startSize.Y.Offset + delta.Y)
+
+		Main.Size = UDim2.new(0, newX, 0, newY)
+	end
+end)
+
+UIS.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1
+	or input.UserInputType == Enum.UserInputType.Touch then
+		dragging = false
+	end
+end)
+
+
 --=============================
 -- MENSAGEM FINAL
 --=============================
